@@ -1,22 +1,36 @@
 name: CI Pipeline
 
 on:
-  push:
+  push: 
     branches: ["main"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - name: Login Dockerhub
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      
+      - name: Login to Docker Hub
         env:
-          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-
+    
       - name: Build the Docker image
-        run: docker build -t taukirattar/express-app .
-      - name: Push to Dockerhub
+        run: docker build -t express-app .
+
+      - name: List Docker images
+        run: docker images
+      
+      - name: Tagging image 
+        run: docker tag express-app taukirattar/express-app:latest
+
+      - name: Push to Docker Hub  
         run: docker push taukirattar/express-app:latest
+
+      
+
+
+
+
